@@ -19,38 +19,22 @@ export default function Loader({ onComplete }) {
     if (!panel || !brand || !counter || !line) return;
 
     let killed = false;
+    let imagesReady = false;
+    let animationReady = false;
 
+    // Preload all product images
     const imageSrcs = products.map((p) => p.image);
     const total = imageSrcs.length;
     let loaded = 0;
-    let displayValue = 0;
-
-    function updateDisplay(target) {
-      if (killed) return;
-      gsap.to({ val: displayValue }, {
-        val: target,
-        duration: 0.4,
-        ease: 'power2.out',
-        onUpdate() {
-          displayValue = Math.round(this.targets()[0].val);
-          counter.textContent = displayValue;
-          line.style.height = `${displayValue}vh`;
-        },
-      });
-    }
 
     function onImageDone() {
       loaded++;
-      const percent = Math.round((loaded / total) * 100);
-      updateDisplay(percent);
-
       if (loaded === total) {
-        // All images loaded — ensure counter reaches 100 then run exit
-        setTimeout(() => runExit(), 500);
+        imagesReady = true;
+        tryExit();
       }
     }
 
-    // Preload all product images
     imageSrcs.forEach((src) => {
       const img = new Image();
       img.onload = onImageDone;
@@ -58,70 +42,74 @@ export default function Loader({ onComplete }) {
       img.src = src;
     });
 
-    // Minimum display time: if images load instantly, still show loader briefly
-    const minTimer = setTimeout(() => {
-      if (loaded === total) return; // already handled
-    }, 1500);
+    // Minimum 2.5s animated counter (0 → 100) regardless of load speed
+    const proxy = { value: 0 };
+    const counterTween = gsap.to(proxy, {
+      value: 100,
+      duration: 2.5,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        if (killed) return;
+        const v = Math.round(proxy.value);
+        counter.textContent = v;
+        line.style.height = `${v}vh`;
+      },
+      onComplete: () => {
+        animationReady = true;
+        tryExit();
+      },
+    });
+
+    function tryExit() {
+      if (killed || !imagesReady || !animationReady) return;
+      runExit();
+    }
 
     function runExit() {
       if (killed) return;
 
-      // Make sure we show 100%
-      gsap.to({ val: displayValue }, {
-        val: 100,
-        duration: 0.3,
-        ease: 'power2.out',
-        onUpdate() {
-          const v = Math.round(this.targets()[0].val);
-          counter.textContent = v;
-          line.style.height = `${v}vh`;
-        },
+      const exitTl = gsap.timeline();
+
+      // Brief pause at 100%
+      exitTl.to({}, { duration: 0.4 });
+
+      // Reveal navbar and hero
+      exitTl.add(() => {
+        const navbarLogo = document.querySelector('.navbar-logo');
+        if (navbarLogo) navbarLogo.style.opacity = '1';
+
+        const items = document.querySelectorAll('.navbar-stagger-item');
+        if (items.length) {
+          gsap.fromTo(items,
+            { opacity: 0, x: -20 },
+            { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 }
+          );
+        }
+
+        const heroContent = document.querySelector('.hero-content');
+        if (heroContent) {
+          gsap.to(heroContent, { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.3 });
+        }
+      });
+
+      // Wait for navbar stagger
+      exitTl.to({}, { duration: 0.8 });
+
+      // Slide panel up
+      exitTl.to(panel, {
+        y: '-100vh',
+        duration: 1,
+        ease: 'power3.inOut',
         onComplete: () => {
-          if (killed) return;
-          const exitTl = gsap.timeline();
-
-          // Brief pause at 100%
-          exitTl.to({}, { duration: 0.4 });
-
-          // Reveal navbar and hero
-          exitTl.add(() => {
-            const navbarLogo = document.querySelector('.navbar-logo');
-            if (navbarLogo) navbarLogo.style.opacity = '1';
-
-            const items = document.querySelectorAll('.navbar-stagger-item');
-            if (items.length) {
-              gsap.fromTo(items,
-                { opacity: 0, x: -20 },
-                { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 }
-              );
-            }
-
-            const heroContent = document.querySelector('.hero-content');
-            if (heroContent) {
-              gsap.to(heroContent, { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.3 });
-            }
-          });
-
-          // Wait for navbar stagger
-          exitTl.to({}, { duration: 0.8 });
-
-          // Slide panel up
-          exitTl.to(panel, {
-            y: '-100vh',
-            duration: 1,
-            ease: 'power3.inOut',
-            onComplete: () => {
-              onCompleteRef.current?.();
-              setDone(true);
-            },
-          });
+          onCompleteRef.current?.();
+          setDone(true);
         },
       });
     }
 
     return () => {
       killed = true;
-      clearTimeout(minTimer);
+      counterTween.kill();
     };
   }, []);
 
