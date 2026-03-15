@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Montserrat', sans-serif;
+  background: #000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100%;
+}
+
+.nav-link:hover span {
+  width: 100%;
+}
+
+.hero-image {
+  perspective: 1000px;
+}
+
+@media (max-width: 599px) {
+  .shop-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.atc-spinner {
+  animation: atc-spin 0.6s linear infinite;
+}
+
+@keyframes atc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
