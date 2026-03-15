@@ -102,6 +102,7 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
           gsap.to(btnText, { opacity: 1, duration: 0.3 });
           if (arrow) gsap.set(arrow, { display: '' });
           btn.style.width = '';
+          btn.style.minWidth = '';
           setIsAddingToCart(false);
         }, 1500);
       },
@@ -119,10 +120,12 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
       ease: 'power2.out',
     });
 
-    // Step 2: Button morph — shrink width, fade text, show spinner
+    // Step 2: Button morph — shrink to compact width for spinner (responsive)
     const btnRect = btn.getBoundingClientRect();
+    const targetWidth = Math.min(btnRect.width * 0.7, 140);
     tl.to(btn, {
-      width: btnRect.width * 0.7,
+      width: targetWidth,
+      minWidth: targetWidth,
       duration: 0.3,
       ease: 'power2.inOut',
     });
@@ -249,14 +252,13 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
 
       {/* Section 1: Product Price */}
       <p
-        className="relative text-white"
+        className="relative text-white text-[28px] md:text-[44px]"
         style={{
           fontFamily: "'Montserrat', sans-serif",
-          fontSize: '44px',
           fontWeight: 700,
           letterSpacing: '-0.02em',
           textShadow: '0 0 25px rgba(255,255,255,0.15)',
-          marginBottom: '32px',
+          marginBottom: '16px',
           zIndex: 1,
         }}
       >
@@ -265,17 +267,17 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
 
       {/* Section 2: Color Selector Panel */}
       <div
-        className="relative flex flex-col"
-        style={{ marginBottom: '32px', zIndex: 1 }}
+        className="relative flex flex-col items-center md:items-start"
+        style={{ marginBottom: '20px', zIndex: 1 }}
       >
         <span
+          className="text-[12px] md:text-[14px]"
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: '14px',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
             color: 'rgba(255,255,255,0.6)',
-            marginBottom: '12px',
+            marginBottom: '10px',
           }}
         >
           Color
@@ -319,8 +321,8 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
       {/* Section 3: Primary CTA Button */}
       <div
         ref={btnWrapRef}
-        className="relative self-stretch md:self-start"
-        style={{ marginBottom: '36px', zIndex: 1 }}
+        className="relative self-stretch md:self-start flex justify-center md:justify-start"
+        style={{ marginBottom: '20px', zIndex: 1 }}
         onMouseMove={handleBtnMouseMove}
         onMouseEnter={handleBtnEnter}
         onMouseLeave={handleBtnLeave}
@@ -335,7 +337,7 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
             fontSize: '14px',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            padding: '16px 42px',
+            padding: '14px 36px',
             borderRadius: '30px',
             color: 'white',
             background: 'rgba(255,255,255,0.12)',
@@ -410,7 +412,7 @@ export default function LeftColumn({ product, currentIndex, onSwatchClick, cartI
 
       {/* Section 4: Product Description */}
       <p
-        className="relative text-center md:text-left"
+        className="relative text-center md:text-left hidden md:block"
         style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontSize: '16px',

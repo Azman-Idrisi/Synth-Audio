@@ -4,12 +4,11 @@ const Navbar = forwardRef(function Navbar({ accent, onCartClick, isLoading }, ca
   const links = ['HOME', 'CATEGORIES', 'BEST SELLERS', 'GIFT GUIDE', 'CONTACT & HELP'];
 
   return (
-    <nav className="flex items-center justify-between h-16 w-full mb-6">
+    <nav className="flex items-center justify-between h-14 md:h-16 w-full mb-2 md:mb-6">
       {/* Logo */}
       <div className="navbar-logo flex items-center gap-2 shrink-0" style={{ opacity: isLoading ? 0 : 1 }}>
         <svg
-          width="28"
-          height="28"
+          className="w-5 h-5 md:w-7 md:h-7"
           viewBox="0 0 24 24"
           fill="none"
           stroke="white"
@@ -20,7 +19,7 @@ const Navbar = forwardRef(function Navbar({ accent, onCartClick, isLoading }, ca
           <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
           <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
         </svg>
-        <span className="text-white font-semibold text-lg tracking-wider">SYNTH AUDIO</span>
+        <span className="text-white font-semibold text-sm md:text-lg tracking-wider">SYNTH AUDIO</span>
       </div>
 
       {/* Nav Links */}
@@ -43,7 +42,7 @@ const Navbar = forwardRef(function Navbar({ accent, onCartClick, isLoading }, ca
       </ul>
 
       {/* Icons */}
-      <div className="flex items-center gap-5 shrink-0">
+      <div className="flex items-center gap-3 md:gap-5 shrink-0">
         <button className="navbar-stagger-item text-white/80 hover:text-white transition-colors" style={{ opacity: isLoading ? 0 : 1 }} aria-label="Search">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />

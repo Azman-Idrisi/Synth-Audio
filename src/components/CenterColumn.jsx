@@ -5,7 +5,7 @@ const CenterColumn = forwardRef(function CenterColumn({ product, heroImageRef },
     <div className="relative flex flex-col items-center justify-center z-10" ref={ref}>
       {/* Background Heading (#3 - refined) */}
       <h1
-        className="hero-heading absolute select-none pointer-events-none text-center uppercase leading-none"
+        className="hero-heading absolute select-none pointer-events-none text-center uppercase leading-none hidden md:block"
         style={{
           fontFamily: "'Bebas Neue', sans-serif",
           fontSize: 'clamp(32px, 8vw, 120px)',
@@ -21,7 +21,7 @@ const CenterColumn = forwardRef(function CenterColumn({ product, heroImageRef },
 
       {/* Product Spotlight (#4) */}
       <div
-        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
+        className="absolute w-[250px] h-[250px] md:w-[500px] md:h-[500px] rounded-full pointer-events-none"
         style={{
           background: 'radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%)',
           filter: 'blur(80px)',
@@ -46,7 +46,7 @@ const CenterColumn = forwardRef(function CenterColumn({ product, heroImageRef },
         ref={heroImageRef}
         src={product.image}
         alt={product.name}
-        className="hero-image relative w-[550px] max-w-full h-auto object-contain"
+        className="hero-image relative w-[550px] md:w-[550px] max-w-full h-auto object-contain"
         style={{
           zIndex: 2,
           filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.4))`,
@@ -60,7 +60,7 @@ const CenterColumn = forwardRef(function CenterColumn({ product, heroImageRef },
         style={{ zIndex: 1 }}
       >
         <div
-          className="w-[220px] h-[44px] rounded-[50%] mx-auto"
+          className="w-[140px] h-[30px] md:w-[220px] md:h-[44px] rounded-[50%] mx-auto"
           style={{
             background: 'radial-gradient(ellipse, rgba(255,255,255,0.2) 0%, transparent 70%)',
             boxShadow: [

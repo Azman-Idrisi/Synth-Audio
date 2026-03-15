@@ -221,7 +221,7 @@ export default function HeroSection({ isLoading }) {
       {/* Background Light Bloom (#8) */}
       <div
         ref={bloomRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-full pointer-events-none"
         style={{
           background: `radial-gradient(circle, ${product.accent}30 0%, transparent 70%)`,
           filter: 'blur(60px)',
@@ -235,8 +235,8 @@ export default function HeroSection({ isLoading }) {
         <div
           className="navbar-wrapper"
           style={{
-            paddingLeft: 'clamp(40px, 6vw, 120px)',
-            paddingRight: 'clamp(40px, 6vw, 120px)',
+            paddingLeft: 'clamp(16px, 6vw, 120px)',
+            paddingRight: 'clamp(16px, 6vw, 120px)',
           }}
         >
           <Navbar ref={cartIconRef} accent={product.accent} onCartClick={() => setIsCartOpen(true)} isLoading={isLoading} />
@@ -244,7 +244,7 @@ export default function HeroSection({ isLoading }) {
 
         {/* 3-Column Layout with safe margins (#1) */}
         <div
-          className="hero-content flex-1 grid grid-cols-1 gap-8 md:grid-cols-[1fr_1.4fr_1fr] md:gap-12 items-center"
+          className="hero-content flex-1 grid grid-cols-1 gap-0 md:grid-cols-[1fr_1.4fr_1fr] md:gap-12 items-center overflow-hidden"
           style={{ opacity: isLoading ? 0 : 1 }}
         >
           <div className="order-1 md:order-2">
@@ -252,7 +252,7 @@ export default function HeroSection({ isLoading }) {
           </div>
           <div
             className="order-2 md:order-1 text-center md:text-left"
-            style={{ paddingLeft: 'clamp(40px, 6vw, 120px)' }}
+            style={{ paddingLeft: 'clamp(20px, 6vw, 120px)', paddingRight: 'clamp(20px, 4vw, 0px)' }}
           >
             <LeftColumn
               product={product}
@@ -264,7 +264,7 @@ export default function HeroSection({ isLoading }) {
             />
           </div>
           <div
-            className="order-3 md:order-3 flex justify-center md:justify-end"
+            className="order-3 hidden md:flex justify-center md:justify-end"
             style={{ paddingRight: 'clamp(40px, 6vw, 120px)' }}
           >
             <RightColumn

@@ -35,6 +35,18 @@ html, body {
     width: 100%;
     text-align: center;
   }
+
+  .hero-content {
+    padding-top: 0;
+    padding-bottom: 12px;
+    gap: 4px !important;
+  }
+}
+
+@media (max-width: 899px) {
+  .hero-pedestal {
+    margin-top: -10px !important;
+  }
 }
 
 .atc-spinner {

@@ -130,19 +130,19 @@ export default function Loader({ onComplete }) {
       <div
         ref={lineRef}
         className="absolute bottom-0"
-        style={{ left: '40px', width: '6px', height: '0vh', background: '#ff4d2e' }}
+        style={{ left: 'clamp(16px, 5vw, 40px)', width: 'clamp(4px, 1vw, 6px)', height: '0vh', background: '#ff4d2e' }}
       />
 
       {/* Percentage counter */}
       <div
         className="absolute flex items-baseline"
-        style={{ bottom: '60px', left: '80px' }}
+        style={{ bottom: 'clamp(30px, 8vh, 60px)', left: 'clamp(40px, 10vw, 80px)' }}
       >
         <span
           ref={counterRef}
           style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: '120px',
+            fontSize: 'clamp(60px, 15vw, 120px)',
             fontWeight: 900,
             color: 'white',
             lineHeight: 1,
@@ -153,7 +153,7 @@ export default function Loader({ onComplete }) {
         <span
           style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: '36px',
+            fontSize: 'clamp(20px, 4vw, 36px)',
             fontWeight: 900,
             color: 'white',
             lineHeight: 1,
@@ -169,7 +169,7 @@ export default function Loader({ onComplete }) {
         style={{
           fontFamily: "'Space Grotesk', sans-serif",
           fontWeight: 600,
-          fontSize: '42px',
+          fontSize: 'clamp(20px, 5vw, 42px)',
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
           color: 'white',
