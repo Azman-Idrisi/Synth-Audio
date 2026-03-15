@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
+import products from '../data/products';
 
 export default function Loader({ onComplete }) {
   const panelRef = useRef(null);
@@ -17,58 +18,111 @@ export default function Loader({ onComplete }) {
     const line = lineRef.current;
     if (!panel || !brand || !counter || !line) return;
 
-    const proxy = { value: 0 };
-    const tl = gsap.timeline();
+    let killed = false;
 
-    // Phase 1: Count 0 → 100 over 2.5s
-    tl.to(proxy, {
-      value: 100,
-      duration: 2.5,
-      ease: 'power2.inOut',
-      onUpdate: () => {
-        const v = Math.round(proxy.value);
-        counter.textContent = v;
-        line.style.height = `${v}vh`;
-      },
-    });
+    const imageSrcs = products.map((p) => p.image);
+    const total = imageSrcs.length;
+    let loaded = 0;
+    let displayValue = 0;
 
-    // Phase 2: Brief pause
-    tl.to({}, { duration: 0.3 });
+    function updateDisplay(target) {
+      if (killed) return;
+      gsap.to({ val: displayValue }, {
+        val: target,
+        duration: 0.4,
+        ease: 'power2.out',
+        onUpdate() {
+          displayValue = Math.round(this.targets()[0].val);
+          counter.textContent = displayValue;
+          line.style.height = `${displayValue}vh`;
+        },
+      });
+    }
 
-    // Phase 2b: Stagger in navbar elements + reveal hero
-    tl.add(() => {
-      const navbarLogo = document.querySelector('.navbar-logo');
-      if (navbarLogo) navbarLogo.style.opacity = '1';
+    function onImageDone() {
+      loaded++;
+      const percent = Math.round((loaded / total) * 100);
+      updateDisplay(percent);
 
-      const items = document.querySelectorAll('.navbar-stagger-item');
-      if (items.length) {
-        gsap.fromTo(items,
-          { opacity: 0, x: -20 },
-          { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 }
-        );
+      if (loaded === total) {
+        // All images loaded — ensure counter reaches 100 then run exit
+        setTimeout(() => runExit(), 500);
       }
+    }
 
-      const heroContent = document.querySelector('.hero-content');
-      if (heroContent) {
-        gsap.to(heroContent, { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.3 });
-      }
+    // Preload all product images
+    imageSrcs.forEach((src) => {
+      const img = new Image();
+      img.onload = onImageDone;
+      img.onerror = onImageDone;
+      img.src = src;
     });
 
-    // Wait for navbar stagger
-    tl.to({}, { duration: 0.8 });
+    // Minimum display time: if images load instantly, still show loader briefly
+    const minTimer = setTimeout(() => {
+      if (loaded === total) return; // already handled
+    }, 1500);
 
-    // Phase 3: Slide the entire panel (with brand inside) upward
-    tl.to(panel, {
-      y: '-100vh',
-      duration: 1,
-      ease: 'power3.inOut',
-      onComplete: () => {
-        onCompleteRef.current?.();
-        setDone(true);
-      },
-    });
+    function runExit() {
+      if (killed) return;
 
-    return () => tl.kill();
+      // Make sure we show 100%
+      gsap.to({ val: displayValue }, {
+        val: 100,
+        duration: 0.3,
+        ease: 'power2.out',
+        onUpdate() {
+          const v = Math.round(this.targets()[0].val);
+          counter.textContent = v;
+          line.style.height = `${v}vh`;
+        },
+        onComplete: () => {
+          if (killed) return;
+          const exitTl = gsap.timeline();
+
+          // Brief pause at 100%
+          exitTl.to({}, { duration: 0.4 });
+
+          // Reveal navbar and hero
+          exitTl.add(() => {
+            const navbarLogo = document.querySelector('.navbar-logo');
+            if (navbarLogo) navbarLogo.style.opacity = '1';
+
+            const items = document.querySelectorAll('.navbar-stagger-item');
+            if (items.length) {
+              gsap.fromTo(items,
+                { opacity: 0, x: -20 },
+                { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 }
+              );
+            }
+
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+              gsap.to(heroContent, { opacity: 1, duration: 0.8, ease: 'power2.out', delay: 0.3 });
+            }
+          });
+
+          // Wait for navbar stagger
+          exitTl.to({}, { duration: 0.8 });
+
+          // Slide panel up
+          exitTl.to(panel, {
+            y: '-100vh',
+            duration: 1,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              onCompleteRef.current?.();
+              setDone(true);
+            },
+          });
+        },
+      });
+    }
+
+    return () => {
+      killed = true;
+      clearTimeout(minTimer);
+    };
   }, []);
 
   if (done) return null;
@@ -121,7 +175,7 @@ export default function Loader({ onComplete }) {
         </span>
       </div>
 
-      {/* Brand text — inside the panel, slides up with it */}
+      {/* Brand text */}
       <span
         ref={brandRef}
         style={{
